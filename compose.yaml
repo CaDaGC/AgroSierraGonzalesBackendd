@@ -1,0 +1,23 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: agrosierra-backendd-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-AgroSierra2026*}
+      MYSQL_DATABASE: agrosierra_db
+      MYSQL_USER: agrosierra
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-AgroSierra2026*}
+    ports:
+      - "${MYSQL_PORT:-3307}:3306"
+    volumes:
+      - agrosierra_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD:-AgroSierra2026*}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+volumes:
+  agrosierra_mysql_data:
+
+
