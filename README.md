@@ -1,25 +1,18 @@
 # AgroSierraGonzalesBackendd
 
-Backend REST para el caso AgroSierra del examen de Desarrollo de Aplicaciones Móviles. Java 21, Spring Boot, Spring Security, JWT y MySQL.
+Backend REST del caso AgroSierra. Java 21, Spring Boot 3.3, Spring Security, JWT y MySQL 8.
 
-## Requisitos
-- Java 21
-- Docker Desktop con Docker Compose
-
-## Inicio rápido
-En Windows:
+## Inicio rápido (Windows)
 1. docker compose up -d mysql
 2. mvnw.cmd spring-boot:run
 
-Linux/macOS: docker compose up -d mysql && ./mvnw spring-boot:run
-
-El backend queda disponible en http://localhost:8080; MySQL en localhost:3307. Hibernate crea y actualiza las tablas automáticamente al iniciar. La primera ejecución agrega usuarios y datos semilla si la base está vacía.
+La API queda en http://localhost:8080 y MySQL en localhost:3307. Hibernate crea/actualiza las tablas al iniciar. La primera ejecución carga 8 lotes, 20 labores y tres usuarios si las tablas están vacías.
 
 ## Usuarios de demostración
-Todos usan Agro2026*:
-- tecnico1 (TECNICO)
-- jefe1 (JEFE_CAMPO)
-- admin (ADMINISTRADOR)
+Contraseña para los tres: Agro2026*
+- tecnico1 — TECNICO
+- jefe1 — JEFE_CAMPO
+- admin — ADMINISTRADOR
 
 ## API v1
 - POST /api/v1/auth/login
@@ -32,10 +25,20 @@ Todos usan Agro2026*:
 - POST /api/v1/lotes/{id}/cerrar-campania
 - GET /api/v1/usuarios/me
 
-Para rutas protegidas, enviar Authorization: Bearer <token>. Los listados usan contenido, pagina, tamanio, totalElementos, totalPaginas y ultima. Las reglas RN-01 a RN-04 viven en AgroService.
+En rutas protegidas, enviar Authorization: Bearer <token>. Respuestas paginadas y errores siguen los DTO del paquete dto.
 
-## Configuración
-Se pueden cambiar credenciales y puertos con DB_URL, DB_USERNAME, DB_PASSWORD, JWT_SECRET, MYSQL_PORT, MYSQL_PASSWORD y MYSQL_ROOT_PASSWORD. Para despliegues reales, definir un secreto JWT y credenciales propios.
+## Arquitectura de paquetes
+- config: configuración Spring Security y datos semilla.
+- controller: controladores REST y manejador común de errores.
+- dto: peticiones, respuestas y paginación.
+- entity / enums: entidades JPA y tipos del dominio.
+- exception: errores de negocio.
+- mapper: conversión de entidades a DTO.
+- repository: repositorios Spring Data JPA.
+- security: JWT, filtro, privilegios por rol y respuestas de seguridad.
+- service / service.impl: contrato y reglas de negocio RN-01 a RN-04.
+- util: límites reutilizables para paginación.
 
-## Esquema
-Paquetes: config (JWT, seguridad, datos semilla), dominio, repositorio, seguridad, servicio y web (controladores y DTO). spring.jpa.hibernate.ddl-auto=update crea/actualiza el esquema al iniciar.
+## IntelliJ IDEA
+Abrir la carpeta raíz que contiene pom.xml. Si el editor muestra los imports de Spring en rojo, abrir pom.xml y elegir Add as Maven Project; luego, en la ventana Maven, usar Reload All Maven Projects. Verificar Project SDK = 21 y recargar el proyecto Maven.
+
